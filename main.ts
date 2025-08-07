@@ -1,28 +1,33 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, TAbstractFile, TFile } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
 
-interface MyPluginSettings {
+interface SummaryCanvasGeneratorSettings {
 	mySetting: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: SummaryCanvasGeneratorSettings = {
 	mySetting: 'default'
 }
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class SummaryCanvasGeneratorPlugin extends Plugin {
+	settings: SummaryCanvasGeneratorSettings;
 
 	async onload() {
 		await this.loadSettings();
 
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
+		this.addRibbonIcon('dice', 'Greet', async () => {
+			const fileContainsFilter = 'SPL'
+
+			// Get the file using the path
+			const files = this.app.vault.getMarkdownFiles()
+				.filter((file) => file.name.contains(fileContainsFilter))
+				.sort((a, b) => a.name.localeCompare(b.name))
+				.map((file) => this.app.vault.getAbstractFileByPath(file.path));
+			files.forEach((file, index) => this.createColumn(file, index))
+			console.log(files);
+			new Notice('Hello, world!');
 		});
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		const statusBarItemEl = this.addStatusBarItem();
@@ -89,6 +94,60 @@ export default class MyPlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+
+	async createColumn(file: TAbstractFile | null, positionIndex: number) {
+			
+			let fileContent = "";	  
+			if (file instanceof TFile) {
+			  try {
+				// Read the content of the file
+				fileContent = await this.app.vault.read(file);
+				console.log(fileContent);  // Output the content (you can process it as needed)
+				
+			  } catch (err) {
+				console.error("Error reading file:", err);
+			  }
+			} else {
+			  console.log(`File not found: ${file?.name}`);
+			}
+
+			const firstH2SectionPosition = fileContent.search("\n## ");
+			console.log(firstH2SectionPosition);
+			
+			if (firstH2SectionPosition > 0) {
+				const h2Sections = fileContent.substring(firstH2SectionPosition).split('\n## ').filter(s => !!s);
+				console.log(h2Sections);
+				
+	
+				const canvas = (this.app.workspace.getLeavesOfType('canvas')[0].view as any).canvas;
+				console.log(canvas);
+				
+				let previousY = 0;
+				let previousHeight = 0;
+				const distanceBetweenNodes = 50;
+				const lineHeight = 30;
+				for (let i = 0; i < h2Sections.length; i++) {
+					const element = h2Sections[i];
+					const lines = element.split('\n').length;
+					const numberOfImages = element.split('\n').filter((line) => line.contains('.png') || line.contains('.jpg')).length;
+					const newHeight = lines * lineHeight + numberOfImages * 250
+					const newY = previousY + previousHeight + distanceBetweenNodes;
+					const lineNode = canvas.createTextNode({
+						pos: { x: positionIndex * 600, y: newY },
+						text: `![[${file?.name.replace('.md', '')}#${element.split('\n')[0]}]]`.replace(' #c', ' c'),
+						size: { width: 500, height: newHeight },
+						focus: false,
+					});
+					console.log(lineNode);
+					
+					previousHeight = newHeight;
+					previousY = newY;
+				}
+			}
+			
+			
+			canvas.requestSave();
+	}
 }
 
 class SampleModal extends Modal {
@@ -108,9 +167,9 @@ class SampleModal extends Modal {
 }
 
 class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+	plugin: SummaryCanvasGeneratorPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: SummaryCanvasGeneratorPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
