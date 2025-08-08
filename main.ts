@@ -3,15 +3,17 @@ import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Set
 export class SearchStringModal extends Modal {
   constructor(app: App, onSubmit: (result: string) => void) {
     super(app);
-	this.setTitle('What .md files should be included? (contains search)');
+	this.setTitle('What .md files should be included?');
 
 	let name = '';
     new Setting(this.contentEl)
-      .setName('Name')
+      .setName('Name (contains search)')
       .addText((text) =>
         text.onChange((value) => {
           name = value;
         }));
+		
+	this.contentEl.createEl('p', { text: 'Summary will be added to canvas: ' + (this.app.workspace.getLeavesOfType('canvas')[0].view as any).file.path })
 
     new Setting(this.contentEl)
       .addButton((btn) =>
@@ -40,7 +42,7 @@ export default class SummaryCanvasGeneratorPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		this.addRibbonIcon('dice', 'Greet', async () => {
+		this.addRibbonIcon('layout-panel-left', 'Generate Canvas Summary', async () => {
 			new SearchStringModal(this.app, (fileContainsFilter) => {
 				// Get the file using the path
 				const files = this.app.vault.getMarkdownFiles()
@@ -49,7 +51,7 @@ export default class SummaryCanvasGeneratorPlugin extends Plugin {
 					.map((file) => this.app.vault.getAbstractFileByPath(file.path));
 				files.forEach((file, index) => this.createColumn(file, index))
 				console.log(files);
-				new Notice('Hello, world!');
+				new Notice('Canvas filled successfully!');
 			}).open();
 		});
 
