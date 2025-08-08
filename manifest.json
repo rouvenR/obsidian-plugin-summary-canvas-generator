@@ -1,7 +1,7 @@
 {
 	"id": "summary-canvas-generator",
 	"name": "Summary Canvas Generator",
-	"version": "1.0.3",
+	"version": "1.1.0",
 	"minAppVersion": "0.15.0",
 	"description": "This plugin allows the creation of a summary canvas. After entering a search string for filter your markdown files by, for each file found a new column of text nodes will be created on the currently active Canvas. Each text node contains the content of a h1 (#) header or an embedding link to the h2 (##) sub-header content.",
 	"author": "rouvenR",
