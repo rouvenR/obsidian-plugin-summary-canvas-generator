@@ -100,7 +100,6 @@ export default class SummaryCanvasGeneratorPlugin extends Plugin {
 			  try {
 				// Read the content of the file
 				fileContent = await this.app.vault.read(file);
-				console.log(fileContent);  // Output the content (you can process it as needed)
 				
 			  } catch (err) {
 				console.error("Error reading file:", err);
@@ -116,21 +115,16 @@ export default class SummaryCanvasGeneratorPlugin extends Plugin {
 			const H2_X_OFFSET = 50;
 
 			const h1Sections = fileContent.split(/\n[#]{1,1} /gm).filter(s => !!s);
-			console.log(h1Sections);
 
 			const canvas = (this.app.workspace.getLeavesOfType('canvas')[0].view as any).canvas;
-			console.log(canvas);
 			
 			let previousY = 0;
 			let previousHeight = 0;
 			for (let i = 1; i < h1Sections.length; i++) { // i = 1 to skip part before first header
 				const h1Section = h1Sections[i];
 				const firstH2Position = h1Section.search(/[#]{2,2} /gm);
-				console.log(firstH2Position);
 				
 				const h1Text = h1Section.substring(0, firstH2Position);
-				console.log(h1Text);
-				
 
 				if (h1Text.length > 0) {
 					const lines = h1Text.split('\n').length;
@@ -149,8 +143,6 @@ export default class SummaryCanvasGeneratorPlugin extends Plugin {
 				}
 
 				const h2Sections = h1Section.split(/[#]{2,2} /gm)
-				console.log(h2Sections);
-				
 
 				for (let j = 1; j < h2Sections.length; j++) {
 					const h2Section = h2Sections[j];
@@ -165,7 +157,6 @@ export default class SummaryCanvasGeneratorPlugin extends Plugin {
 						size: { width: DEFAULT_COLUMN_WIDTH, height: newHeight },
 						focus: false,
 					});
-					console.log(lineNode);
 					
 					previousHeight = newHeight;
 					previousY = newY;
