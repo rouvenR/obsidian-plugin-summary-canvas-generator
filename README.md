@@ -1,4 +1,9 @@
-# Obsidian Sample Plugin
+# Summary Canvas Generator
+
+This plugin allows the creation of a summary canvas. After entering a search string for filter your markdown files by, for each file found a new column of text nodes will be created on the currently active Canvas. Each text node contains the content of a h1 (#) header or an embedding link to the h2 (##) sub-header content.
+
+
+<!-- # Obsidian Sample Plugin
 
 This is a sample plugin for Obsidian (https://obsidian.md).
 
@@ -91,4 +96,4 @@ If you have multiple URLs, you can also do:
 
 ## API Documentation
 
-See https://github.com/obsidianmd/obsidian-api
+See https://github.com/obsidianmd/obsidian-api -->
