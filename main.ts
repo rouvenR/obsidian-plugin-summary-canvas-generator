@@ -111,9 +111,9 @@ export default class SummaryCanvasGeneratorPlugin extends Plugin {
 			const DEFAULT_DISTANCE_BETWEEN_NODES = 50;
 			const DEFAULT_LINE_HEIGHT = 30;
 			const DEFAULT_IMAGE_HEIGHT = 250;
-			const DEFAULT_DISTANCE_BETWEEN_COLUMNS = 600;
+			const DEFAULT_DISTANCE_BETWEEN_COLUMNS = 700;
 			const DEFAULT_COLUMN_WIDTH = 500;
-			const H2_X_OFFSET = 25;
+			const H2_X_OFFSET = 50;
 
 			const h1Sections = fileContent.split(/\n[#]{1,1} /gm).filter(s => !!s);
 			console.log(h1Sections);
